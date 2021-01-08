@@ -19,7 +19,7 @@ describe('Contract', function () {
 
   it('should be funded', async () => {
     let balance = await ethers.provider.getBalance(contract.address)
-    "Attempted to approve the Escrow from the beneficiary address. Expected transaction to revert!"
+
     expect(balance.toString()).to.equal(deposit.toString())
   })
 
@@ -34,7 +34,7 @@ describe('Contract', function () {
         ex = _ex
       }
 
-      expect(ex).to.equal(
+      expect(ex,
         "Attempted to approve the Escrow from the beneficiary address. Expected transaction to revert!"
       )
     })
