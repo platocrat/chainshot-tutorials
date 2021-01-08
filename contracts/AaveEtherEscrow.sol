@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.7.5;
 
-import "./IERC20.sol";
-import "./IWETHGateway.sol";
+import "./interface/IERC20.sol";
+import "./interface/IWETHGateway.sol";
 
 contract AaveEtherEscrow {
     address arbiter;
