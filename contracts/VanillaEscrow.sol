@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.7.5;
 
-contract Escrow {
+contract VanillaEscrow {
     address public depositor;
     address public beneficiary;
     address public arbiter;

@@ -6,7 +6,7 @@
 import { expect } from "chai"
 import { ethers } from 'hardhat'
 
-describe('Contract', function () {
+describe('VanillaEscrow', () => {
   let contract: any,
     arbiter: any,
     beneficiary: any,
@@ -17,9 +17,9 @@ describe('Contract', function () {
   beforeEach(async () => {
     [depositor, arbiter, beneficiary] = await ethers.provider.listAccounts()
 
-    const Contract = await ethers.getContractFactory("Escrow")
+    const VanillaEscrow = await ethers.getContractFactory("VanillaEscrow")
 
-    contract = await Contract.deploy(arbiter, beneficiary, { value: deposit })
+    contract = await VanillaEscrow.deploy(arbiter, beneficiary, { value: deposit })
 
     await contract.deployed()
   })
