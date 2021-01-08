@@ -1,3 +1,8 @@
+/**
+ * @dev Safely ignore these package errors:
+ * `Cannot find module 'chai' or its corresponding type declarations.`
+ * `Cannot find module 'hardhat' or its corresponding type declarations.`
+ */
 import { expect } from "chai"
 import { ethers } from 'hardhat'
 
