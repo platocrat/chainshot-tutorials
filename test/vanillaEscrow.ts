@@ -1,14 +1,16 @@
-const { expect } = require("chai")
+import { expect } from "chai"
+import { ethers } from 'hardhat'
 
 describe('Contract', function () {
-  let contract
-  let arbiter
-  let beneficiary
+  let contract: any,
+    arbiter: any,
+    beneficiary: any,
+    depositor: any
 
   const deposit = ethers.utils.parseEther("1")
 
   beforeEach(async () => {
-    [ depositor, arbiter, beneficiary ] = await ethers.provider.listAccounts()
+    [depositor, arbiter, beneficiary] = await ethers.provider.listAccounts()
 
     const Contract = await ethers.getContractFactory("Escrow")
 
@@ -41,7 +43,7 @@ describe('Contract', function () {
   })
 
   describe("after approval from the arbiter", () => {
-    let beforeBalance
+    let beforeBalance: any
 
     before(async () => {
       beforeBalance = await ethers.provider.getBalance(beneficiary)
