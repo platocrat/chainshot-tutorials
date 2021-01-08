@@ -4564,7 +4564,7 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"has-symbols@npm:^1.0.0, has-symbols@npm:^1.0.1":
+"has-symbols@npm:*, has-symbols@npm:^1.0.0, has-symbols@npm:^1.0.1":
   version: 1.0.1
   resolution: "has-symbols@npm:1.0.1"
   checksum: 84e2a03ada6f530f0c1ebea64df5932556ac20a4b78998f1f2b5dd0cf736843e8082c488b0ea7f08b9aec72fb6d8b736beed2fd62fac60dcaebfdc0b8d2aa7ac
