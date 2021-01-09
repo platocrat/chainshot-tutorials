@@ -8,9 +8,10 @@ import { ethers } from 'hardhat'
 
 describe('AaveEtherEscrow', () => {
   let aaveEtherEscrow: any,
-    aWETH: number,
+    aWETH: any,
     arbiter: any,
-    beneficiary: any
+    beneficiary: any,
+    depositor: any
 
   const deposit = ethers.utils.parseEther('1')
 
@@ -23,7 +24,7 @@ describe('AaveEtherEscrow', () => {
       value: deposit
     })
 
-    await aaveEtherEscrow.deployed()
+    // await aaveEtherEscrow.deployed()
 
     aWETH = await ethers.getContractAt(
       'IERC20', '0x030bA81f1c18d280636F32af80b9AAd02Cf0854e'
