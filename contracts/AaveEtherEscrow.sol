@@ -56,7 +56,11 @@ contract AaveEtherEscrow {
         gateway.depositETH{value: address(this).balance}(address(this), 0);
     }
 
-    receive() external payable {}
+    event Received(address, uint256);
+
+    receive() external payable {
+        emit Received(msg.sender, msg.value);
+    }
 
     function approve() external {
         /**
