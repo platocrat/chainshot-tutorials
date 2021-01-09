@@ -56,6 +56,8 @@ contract AaveEtherEscrow {
         gateway.depositETH{value: address(this).balance}(address(this), 0);
     }
 
+    receive() external payable {}
+
     function approve() external {
         /**
          * @dev `AaveEtherEscrow` sends ether to the WETH gateway, which sends
@@ -71,5 +73,10 @@ contract AaveEtherEscrow {
 
         uint256 balance = aWETH.balanceOf(address(this));
         aWETH.approve(address(gateway), balance);
+
+        /**
+         * @dev Withdraw ETH into the AaveEtherEscrow contract.
+         */
+        gateway.withdrawETH(type(uint256).max, address(this));
     }
 }
