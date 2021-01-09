@@ -40,8 +40,6 @@ contract AaveEtherEscrow {
     }
 
     function approve() external {
-        require(msg.sender == arbiter);
-
         /**
          * @dev `AaveEtherEscrow` sends ether to the WETH gateway, which sends
          * WETH to the Aave lending pool, which mints Aave interest bearing
@@ -52,6 +50,8 @@ contract AaveEtherEscrow {
          * to call `transferFrom` on the `aWETH` contract. This assumes that we
          * already have approved the spend from our contract.
          */
+        require(msg.sender == arbiter);
+
         uint256 balance = aWETH.balanceOf(address(this));
         aWETH.approve(address(gateway), balance);
 
