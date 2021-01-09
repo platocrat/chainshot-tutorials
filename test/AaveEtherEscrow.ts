@@ -14,6 +14,7 @@ describe('AaveEtherEscrow', () => {
     depositor: any
 
   const deposit = ethers.utils.parseEther('1')
+  const wethGatewayAddress = "0xDcD33426BA191383f1c9B431A342498fdac73488"
 
   before(async () => {
     const AaveEtherEscrow = await ethers.getContractFactory('AaveEtherEscrow');
@@ -41,5 +42,49 @@ describe('AaveEtherEscrow', () => {
     const balance = await aWETH.balanceOf(aaveEtherEscrow.address)
 
     expect(balance.toString()).to.equal(deposit.toString())
+  })
+
+  describe('approving as the beneficiary', () => {
+    it('should not be allowed', async () => {
+      let ex: any
+
+      try {
+        const signer = await ethers.provider.getSigner(beneficiary)
+        await aaveEtherEscrow.connect(signer).approve()
+      } catch (_ex) {
+        ex = _ex
+      }
+
+      expect(
+        ex,
+        "Expected the transaction to revert when the beneficiary calls approve!"
+      )
+    })
+  })
+
+  describe('after approving', () => {
+    before(async () => {
+      const thousandDays = 1000 * 24 * 60 * 60
+
+      await hre.network.provider.request({
+        method: "evm_increaseTime",
+        params: [thousandDays]
+      })
+
+      const arbiterSigner = await ethers.provider.getSigner(arbiter)
+
+      await aaveEtherEscrow.connect(arbiterSigner).approve()
+    })
+
+    it('should give the WETH gateway allowance to spend the initial deposit', async () => {
+      const allowance = await aWETH.allowance(
+        aaveEtherEscrow.address, wethGatewayAddress
+      )
+
+      expect(
+        allowance.gte(deposit),
+        "Expected an allowance on the WETH Gateway!"
+      )
+    })
   })
 })
