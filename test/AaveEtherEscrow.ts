@@ -69,7 +69,7 @@ describe('AaveEtherEscrow', () => {
 
   /** @dev Step 2 */
   describe('after approving', () => {
-    let balanceBefore: number
+    let balanceBefore: any
 
     before(async () => {
       balanceBefore = await ethers.provider.getBalance(beneficiary)
