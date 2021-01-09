@@ -13,7 +13,9 @@ describe('AaveEtherEscrow', () => {
     beneficiary: any,
     depositor: any
 
+  /** @dev Step 1 */
   const deposit = ethers.utils.parseEther('1')
+  /** @dev Step 2 */
   const wethGatewayAddress = "0xDcD33426BA191383f1c9B431A342498fdac73488"
 
   before(async () => {
@@ -32,38 +34,46 @@ describe('AaveEtherEscrow', () => {
     )
   })
 
+  /** @dev Step 1 */
   it('should not have an ether balance', async () => {
     const balance = await ethers.provider.getBalance(aaveEtherEscrow.address)
 
     expect(balance.toString()).to.equal("0")
   })
 
+  /** @dev Step 1 */
   it("should have aWETH", async () => {
     const balance = await aWETH.balanceOf(aaveEtherEscrow.address)
 
     expect(balance.toString()).to.equal(deposit.toString())
   })
 
-  describe('approving as the beneficiary', () => {
-    it('should not be allowed', async () => {
-      let ex: any
+  /** @dev Step 2 */
+  // describe('approving as the beneficiary', () => {
+  //   it('should not be allowed', async () => {
+  //     let ex: any
 
-      try {
-        const signer = await ethers.provider.getSigner(beneficiary)
-        await aaveEtherEscrow.connect(signer).approve()
-      } catch (_ex) {
-        ex = _ex
-      }
+  //     try {
+  //       const signer = await ethers.provider.getSigner(beneficiary)
+  //       await aaveEtherEscrow.connect(signer).approve()
+  //     } catch (_ex) {
+  //       ex = _ex
+  //     }
 
-      expect(
-        ex,
-        "Expected the transaction to revert when the beneficiary calls approve!"
-      )
-    })
-  })
+  //     expect(
+  //       ex,
+  //       "Expected the transaction to revert when the beneficiary calls approve!"
+  //     )
+  //   })
+  // })
 
+  /** @dev Step 2 */
   describe('after approving', () => {
+    let balanceBefore: number
+
     before(async () => {
+      balanceBefore = await ethers.provider.getBalance(beneficiary)
+
       const thousandDays = 1000 * 24 * 60 * 60
 
       await hre.network.provider.request({
@@ -76,21 +86,32 @@ describe('AaveEtherEscrow', () => {
       await aaveEtherEscrow.connect(arbiterSigner).approve()
     })
 
-    it('should give the WETH gateway allowance to spend the initial deposit', async () => {
-      const allowance = await aWETH.allowance(
-        aaveEtherEscrow.address, wethGatewayAddress
-      )
+    /** @dev Step 2 */
+    // it('should give the WETH gateway allowance to spend the initial deposit', async () => {
+    //   const allowance = await aWETH.allowance(
+    //     aaveEtherEscrow.address, wethGatewayAddress
+    //   )
 
-      expect(
-        allowance.gte(deposit),
-        "Expected an allowance on the WETH Gateway!"
-      )
-    })
+    //   expect(
+    //     allowance.gte(deposit),
+    //     "Expected an allowance on the WETH Gateway!"
+    //   )
+    // })
 
-    it('should withdraw the ether balance to the contract', async () => {
-      const balance = await ethers.provider.getBalance(aaveEtherEscrow.address)
 
-      expect(balance.gt(deposit))
+    /** @dev Step 3 */
+    // it('should withdraw the ether balance to the contract', async () => {
+    //   const balance = await ethers.provider.getBalance(aaveEtherEscrow.address)
+
+    //   expect(balance.gt(deposit))
+    // })
+
+    /** @dev Step 4 */
+    it('should provide the principal to the beneficiary', async () => {
+      const balanceAfter = await ethers.provider.getBalance(beneficiary)
+      const diff = balanceAfter.sub(balanceBefore)
+
+      expect(diff.toString()).to.equal(deposit.toString())
     })
   })
 })

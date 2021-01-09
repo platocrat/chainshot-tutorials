@@ -8,6 +8,7 @@ contract AaveEtherEscrow {
     address arbiter;
     address depositor;
     address beneficiary;
+    uint256 initialDeposit;
 
     /**
      * @dev One tricky aspect here is that the Aave lending pool contract is
@@ -27,6 +28,7 @@ contract AaveEtherEscrow {
         arbiter = _arbiter;
         beneficiary = _beneficiary;
         depositor = msg.sender; // Depositor deploys this contract
+        initialDeposit = msg.value; // To pay the beneficiary after delivery
 
         gateway.depositETH{value: address(this).balance}(address(this), 0);
     }
@@ -38,6 +40,8 @@ contract AaveEtherEscrow {
     }
 
     function approve() external {
+        require(msg.sender == arbiter);
+
         /**
          * @dev `AaveEtherEscrow` sends ether to the WETH gateway, which sends
          * WETH to the Aave lending pool, which mints Aave interest bearing
@@ -48,8 +52,6 @@ contract AaveEtherEscrow {
          * to call `transferFrom` on the `aWETH` contract. This assumes that we
          * already have approved the spend from our contract.
          */
-        require(msg.sender == arbiter);
-
         uint256 balance = aWETH.balanceOf(address(this));
         aWETH.approve(address(gateway), balance);
 
@@ -57,5 +59,10 @@ contract AaveEtherEscrow {
          * @dev Withdraw ETH into the AaveEtherEscrow contract.
          */
         gateway.withdrawETH(type(uint256).max, address(this));
+
+        /**
+         * @dev Pay the initial deposit that was promised to the beneficiary.
+         */
+        payable(beneficiary).transfer(initialDeposit);
     }
 }
