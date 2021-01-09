@@ -56,5 +56,20 @@ contract AaveEtherEscrow {
         gateway.depositETH{value: address(this).balance}(address(this), 0);
     }
 
-    function approve() external {}
+    function approve() external {
+        /**
+         * @dev `AaveEtherEscrow` sends ether to the WETH gateway, which sends
+         * WETH to the Aave lending pool, which mints Aave interest bearing
+         * WETH, or `aWETH`.
+         *
+         * If we want to withdraw ETH from Aave, we will need to first approve
+         * the WETH gateway to spend our `aWETH`. The WETH gateway will attempt
+         * to call `transferFrom` on the `aWETH` contract. This assumes that we
+         * already have approved the spend from our contract.
+         */
+        require(msg.sender == arbiter);
+
+        uint256 balance = aWETH.balanceOf(address(this));
+        aWETH.approve(address(gateway), balance);
+    }
 }
