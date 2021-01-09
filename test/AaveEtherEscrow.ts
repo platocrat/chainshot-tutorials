@@ -24,7 +24,7 @@ describe('AaveEtherEscrow', () => {
       value: deposit
     })
 
-    // await aaveEtherEscrow.deployed()
+    await aaveEtherEscrow.deployed()
 
     aWETH = await ethers.getContractAt(
       'IERC20', '0x030bA81f1c18d280636F32af80b9AAd02Cf0854e'
