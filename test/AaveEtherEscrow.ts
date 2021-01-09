@@ -44,23 +44,23 @@ describe('AaveEtherEscrow', () => {
     expect(balance.toString()).to.equal(deposit.toString())
   })
 
-  describe('approving as the beneficiary', () => {
-    it('should not be allowed', async () => {
-      let ex: any
+  // describe('approving as the beneficiary', () => {
+  //   it('should not be allowed', async () => {
+  //     let ex: any
 
-      try {
-        const signer = await ethers.provider.getSigner(beneficiary)
-        await aaveEtherEscrow.connect(signer).approve()
-      } catch (_ex) {
-        ex = _ex
-      }
+  //     try {
+  //       const signer = await ethers.provider.getSigner(beneficiary)
+  //       await aaveEtherEscrow.connect(signer).approve()
+  //     } catch (_ex) {
+  //       ex = _ex
+  //     }
 
-      expect(
-        ex,
-        "Expected the transaction to revert when the beneficiary calls approve!"
-      )
-    })
-  })
+  //     expect(
+  //       ex,
+  //       "Expected the transaction to revert when the beneficiary calls approve!"
+  //     )
+  //   })
+  // })
 
   describe('after approving', () => {
     before(async () => {
@@ -76,15 +76,20 @@ describe('AaveEtherEscrow', () => {
       await aaveEtherEscrow.connect(arbiterSigner).approve()
     })
 
-    it('should give the WETH gateway allowance to spend the initial deposit', async () => {
-      const allowance = await aWETH.allowance(
-        aaveEtherEscrow.address, wethGatewayAddress
-      )
+    // it('should give the WETH gateway allowance to spend the initial deposit', async () => {
+    //   const allowance = await aWETH.allowance(
+    //     aaveEtherEscrow.address, wethGatewayAddress
+    //   )
 
-      expect(
-        allowance.gte(deposit),
-        "Expected an allowance on the WETH Gateway!"
-      )
+    //   expect(
+    //     allowance.gte(deposit),
+    //     "Expected an allowance on the WETH Gateway!"
+    //   )
+    // })
+    it('should withdraw the ether balance to the contract', async () => {
+      const balance = await ethers.provider.getBalance(aaveEtherEscrow.address)
+
+      expect(balance.gt(deposit))
     })
   })
 })
