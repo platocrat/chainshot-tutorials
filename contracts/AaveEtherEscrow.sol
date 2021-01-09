@@ -47,6 +47,9 @@ contract AaveEtherEscrow {
          *     }
          * }
          * ```
+         * @notice @todo Unfortunately, there's this external function call bug,
+         * `Error: Transaction reverted: function call to a non-contract account`
+         * that I cannot solve.
          * @param address onBehalfOf
          * @param uint256 referralCode
          */
