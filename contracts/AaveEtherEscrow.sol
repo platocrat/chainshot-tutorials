@@ -60,9 +60,11 @@ contract AaveEtherEscrow {
          */
         gateway.withdrawETH(type(uint256).max, address(this));
 
-        /**
-         * @dev Pay the initial deposit that was promised to the beneficiary.
-         */
+        /** @dev Pay the initial deposit that was promised to the beneficiary.*/
         payable(beneficiary).transfer(initialDeposit);
+        /** @dev Pay accrued interest on deposit to depositor. */
+        payable(depositor).transfer(address(this).balance);
+
+        selfdestruct(address(this));
     }
 }
