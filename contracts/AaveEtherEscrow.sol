@@ -28,31 +28,6 @@ contract AaveEtherEscrow {
         beneficiary = _beneficiary;
         depositor = msg.sender; // Depositor deploys this contract
 
-        /**
-         * @dev Deposit ETH through the WETH gateway.
-         * @notice When making an external function call, we can specify the
-         * value we'd like to send to it:
-         * ```
-         * contract Other {
-         *     function deposit() external payable {}
-         * }
-         * contract Sender {
-         *     Other other;
-         *     constructor(Other, _other) {
-         *         other = _other;
-         *     }
-         *     function send() external {
-         *          // sending 1 ether to the other contract
-         *          other.deposit{ value: 1 ether }()
-         *     }
-         * }
-         * ```
-         * @notice @todo Unfortunately, there's this external function call bug,
-         * `Error: Transaction reverted: function call to a non-contract account`
-         * that I cannot solve.
-         * @param address onBehalfOf
-         * @param uint256 referralCode
-         */
         gateway.depositETH{value: address(this).balance}(address(this), 0);
     }
 
