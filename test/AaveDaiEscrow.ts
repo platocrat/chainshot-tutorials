@@ -81,43 +81,59 @@ describe('AaveDaiEscrow', () => {
   // })
 
   /** @dev Step 3: Approve & Withdraw */
-  describe('approving as the beneficiary', () => {
-    it('should not be allowed', async () => {
-      let ex: any
+  // describe('approving as the beneficiary', () => {
+  //   it('should not be allowed', async () => {
+  //     let ex: any
 
-      try {
-        const signer = await ethers.provider.getSigner(beneficiary)
+  //     try {
+  //       const signer = await ethers.provider.getSigner(beneficiary)
 
-        await aaveDaiEscrow.connect(signer).approve()
-      } catch (_ex) {
-        ex = _ex
-      }
+  //       await aaveDaiEscrow.connect(signer).approve()
+  //     } catch (_ex) {
+  //       ex = _ex
+  //     }
 
-      expect(
-        ex,
-        'Expected the transaction to revert when the beneficiary calls approve!'
-      )
+  //     expect(
+  //       ex,
+  //       'Expected the transaction to revert when the beneficiary calls approve!'
+  //     )
+  //   })
+
+  /** @dev Step 3: Approve & Withdraw */
+  describe('after approving', () => {
+    /** @dev Step 4: Approve Interest */
+    let balanceBefore: any
+
+    before(async () => {
+      /** @dev Step 4: Approve Interest */
+      balanceBefore = await dai.balanceOf(depositorAddr)
+
+      const thousandDays: number = 1000 * 24 * 60 * 60
+
+      await hre.network.provider.request({
+        method: 'evm_increaseTime',
+        params: [thousandDays]
+      })
+
+      const arbiterSigner = await ethers.provider.getSigner(arbiter)
+
+      await aaveDaiEscrow.connect(arbiterSigner).approve()
     })
 
-    describe('after approving', () => {
-      before(async () => {
-        const thousandDays: number = 1000 * 24 * 60 * 60
+    /** @dev Step 4: Approve Interest */
+    it('should provide interest to the depositor', async () => {
+      let balanceAfter = await dai.balanceOf(depositorAddr)
 
-        await hre.network.provider.request({
-          method: 'evm_increaseTime',
-          params: [thousandDays]
-        })
+      // This method of assertion is NOT recommended! Instead, assert the 
+      // expected value.
+      expect(balanceAfter).to.be.above(balanceBefore)
+    })
 
-        const arbiterSigner = await ethers.provider.getSigner(arbiter)
+    /** @dev Step 3: Approve & Withdraw */
+    it('should provide the principal to the beneficiary', async () => {
+      const balance = await dai.balanceOf(beneficiary)
 
-        await aaveDaiEscrow.connect(arbiterSigner).approve()
-      })
-
-      it('should provide the principal to the beneficiary', async () => {
-        const balance = await dai.balanceOf(beneficiary)
-
-        expect(balance.toString()).to.equals(deposit.toString())
-      })
+      expect(balance.toString()).to.equals(deposit.toString())
     })
   })
 })

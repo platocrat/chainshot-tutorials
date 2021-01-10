@@ -36,7 +36,7 @@ contract AaveDaiEscrow {
         pool.deposit(address(dai), _amount, address(this), 0);
     }
 
-    function approve() external { 
+    function approve() external {
         // Only the `arbiter` call the `approve()` method.
         require(msg.sender == arbiter);
 
@@ -51,5 +51,7 @@ contract AaveDaiEscrow {
             initialDeposit,
             beneficiary
         );
+        // Pay accrued interest to the depositor
+        pool.withdraw(address(dai), type(uint256).max, depositor);
     }
 }
