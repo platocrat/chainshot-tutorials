@@ -67,16 +67,57 @@ describe('AaveDaiEscrow', () => {
   // })
 
   /** @dev Step 2 */
-  it('should not hold DAI', async () => {
-    const balance = await dai.balanceOf(aaveDaiEscrow.address)
+  // it('should not hold DAI', async () => {
+  //   const balance = await dai.balanceOf(aaveDaiEscrow.address)
 
-    expect(balance.toString()).to.equal("0")
-  })
+  //   expect(balance.toString()).to.equal("0")
+  // })
 
   /** @dev Step 2 */
-  it('should hold DAI', async () => {
-    const balance = await aDai.balanceOf(aaveDaiEscrow.address)
+  // it('should hold DAI', async () => {
+  //   const balance = await aDai.balanceOf(aaveDaiEscrow.address)
 
-    expect(balance.toString()).to.equal(deposit.toString())
+  //   expect(balance.toString()).to.equal(deposit.toString())
+  // })
+
+  /** @dev Step 3: Approve & Withdraw */
+  describe('approving as the beneficiary', () => {
+    it('should not be allowed', async () => {
+      let ex: any
+
+      try {
+        const signer = await ethers.provider.getSigner(beneficiary)
+
+        await aaveDaiEscrow.connect(signer).approve()
+      } catch (_ex) {
+        ex = _ex
+      }
+
+      expect(
+        ex,
+        'Expected the transaction to revert when the beneficiary calls approve!'
+      )
+    })
+
+    describe('after approving', () => {
+      before(async () => {
+        const thousandDays: number = 1000 * 24 * 60 * 60
+
+        await hre.network.provider.request({
+          method: 'evm_increaseTime',
+          params: [thousandDays]
+        })
+
+        const arbiterSigner = await ethers.provider.getSigner(arbiter)
+
+        await aaveDaiEscrow.connect(arbiterSigner).approve()
+      })
+
+      it('should provide the principal to the beneficiary', async () => {
+        const balance = await dai.balanceOf(beneficiary)
+
+        expect(balance.toString()).to.equals(deposit.toString())
+      })
+    })
   })
 })
