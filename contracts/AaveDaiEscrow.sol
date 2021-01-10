@@ -28,6 +28,10 @@ contract AaveDaiEscrow {
 
         // Transfer `_amount` of dai to this contract
         dai.transferFrom(msg.sender, address(this), _amount);
+        // Approve the DAI spend
+        dai.approve(address(pool), _amount);
+        // Deposit the DAI through the pool contract
+        pool.deposit(address(dai), _amount, address(this), 0);
     }
 
     function approve() external {}
