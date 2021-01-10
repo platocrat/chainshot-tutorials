@@ -4,7 +4,7 @@
 import { expect } from 'chai'
 import { ethers } from 'hardhat'
 
-describe('AaveDaiEscrow', function () {
+describe('AaveDaiEscrow', () => {
   let aaveDaiEscrow: any,
     depositorAddr: string = '0x47ac0Fb4F2D84898e4D9E7b4DaB3C24507a6D503',
     depositorSigner: any,
@@ -59,8 +59,23 @@ describe('AaveDaiEscrow', function () {
     await aaveDaiEscrow.deployed()
   })
 
-  it('should hold DAI', async function () {
+  /** @dev Step 1 */
+  // it('should hold DAI', async function () {
+  //   const balance = await dai.balanceOf(aaveDaiEscrow.address)
+
+  //   expect(balance.toString()).to.equal(deposit.toString())
+  // })
+
+  /** @dev Step 2 */
+  it('should not hold DAI', async () => {
     const balance = await dai.balanceOf(aaveDaiEscrow.address)
+
+    expect(balance.toString()).to.equal("0")
+  })
+
+  /** @dev Step 2 */
+  it('should hold DAI', async () => {
+    const balance = await aDai.balanceOf(aaveDaiEscrow.address)
 
     expect(balance.toString()).to.equal(deposit.toString())
   })
