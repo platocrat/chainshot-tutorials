@@ -1,4 +1,11 @@
 /**
+ * @dev This test file compiles with the following error, an error which I am
+ * yet unable to solve:
+ * ```
+ * Error: Transaction reverted: function call to a non-contract account
+ *   at AaveEtherEscrow.constructor (contracts/AaveEtherEscrow.sol:33)
+ * ```
+ * 
  * @dev Safely ignore these package errors:
  * `Cannot find module 'chai' or its corresponding type declarations.`
  * `Cannot find module 'hardhat' or its corresponding type declarations.`
