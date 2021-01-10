@@ -35,6 +35,15 @@ export default {
             runs: 200
           }
         },
+      },
+      {
+        version: "0.6.12",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 200
+          }
+        },
       }
     ]
   },
