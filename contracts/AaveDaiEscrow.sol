@@ -8,6 +8,7 @@ contract AaveDaiEscrow {
     address arbiter;
     address depositor;
     address beneficiary;
+    uint256 initialDeposit;
 
     // The mainnet Aave v2 lending pool
     ILendingPool pool =
@@ -25,6 +26,7 @@ contract AaveDaiEscrow {
         arbiter = _arbiter;
         beneficiary = _beneficiary;
         depositor = msg.sender;
+        initialDeposit = _amount;
 
         // Transfer `_amount` of dai to this contract
         dai.transferFrom(msg.sender, address(this), _amount);
@@ -34,5 +36,20 @@ contract AaveDaiEscrow {
         pool.deposit(address(dai), _amount, address(this), 0);
     }
 
-    function approve() external {}
+    function approve() external {
+        // Only the `arbiter` call the `approve()` method.
+        require(msg.sender == arbiter);
+
+        // To pay the `beneficiary`, we must first approve the `pool` to spend
+        // our `aDai` balance.
+        aDai.approve(address(pool), type(uint256).max);
+        // Withdraw directly to the `beneficiary`
+        pool.withdraw(
+            // When you call `withdraw`, you must specify the underlying asset
+            // you are trying to withdraw, not the interest bearing asset.
+            address(dai),
+            initialDeposit,
+            beneficiary
+        );
+    }
 }
