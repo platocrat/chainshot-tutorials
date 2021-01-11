@@ -87,10 +87,6 @@ describe('AaveEtherEscrow', () => {
         method: "evm_increaseTime",
         params: [thousandDays]
       })
-
-      const arbiterSigner = await ethers.provider.getSigner(arbiter)
-
-      await aaveEtherEscrow.connect(arbiterSigner).approve()
     })
 
     /** @dev Step 2 */
@@ -114,11 +110,28 @@ describe('AaveEtherEscrow', () => {
     // })
 
     /** @dev Step 4 */
-    it('should provide the principal to the beneficiary', async () => {
-      const balanceAfter = await ethers.provider.getBalance(beneficiary)
+    async function computeBalanceAfter(_party: any) {
+      const balanceBefore = await ethers.provider.getBalance(_party)
+      const arbiterSigner = ethers.provider.getSigner(arbiter)
+
+      await aaveEtherEscrow.connect(arbiterSigner).withdraw()
+
+      const balanceAfter = await ethers.provider.getBalance(_party)
       const diff = balanceAfter.sub(balanceBefore)
 
-      expect(diff.toString()).to.equal(deposit.toString())
+      return diff
+    }
+
+    it('should provide the principal to the beneficiary', async () => {
+      expect(
+        computeBalanceAfter(beneficiary).toString()
+      ).to.equal(deposit.toString())
+    })
+
+    it('should provide the accrued interest to the depositor', async () => {
+      const diff = await computeBalanceAfter(depositor)
+
+      expect(diff.gt(0))
     })
   })
 })

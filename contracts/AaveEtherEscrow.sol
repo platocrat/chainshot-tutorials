@@ -28,10 +28,9 @@ contract AaveEtherEscrow {
         arbiter = _arbiter;
         beneficiary = _beneficiary;
         depositor = msg.sender; // Depositor deploys this contract
+        initialDeposit = msg.value; // To pay the beneficiary after delivery
 
         gateway.depositETH{value: address(this).balance}(address(this), 0);
-
-        initialDeposit = msg.value; // To pay the beneficiary after delivery
     }
 
     event Received(address, uint256);
@@ -63,9 +62,9 @@ contract AaveEtherEscrow {
 
         /** @dev Pay the initial deposit that was promised to the beneficiary.*/
         payable(beneficiary).transfer(initialDeposit);
-        /** @dev Pay accrued interest on deposit to depositor. */
-        payable(depositor).transfer(address(this).balance);
 
-        selfdestruct(address(this));
+        /** @dev Pay accrued interest on deposit to depositor. */
+        // payable(depositor).transfer(address(this).balance);
+        selfdestruct(payable(depositor));
     }
 }
