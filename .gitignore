@@ -1,9 +1,8 @@
-node_modules
-
 #Hardhat files
 cache
 artifacts
 
+# Node
 node_modules
 
 #Hardhat files
@@ -17,3 +16,9 @@ artifacts
 !.yarn/sdks
 !.yarn/versions
 .pnp.*
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.production

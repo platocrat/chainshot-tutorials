@@ -11,6 +11,7 @@
     "./test"
   ],
   "files": [
-    "hardhat.config.ts"
+    "hardhat.config.ts",
+    "env.d.ts"
   ]
 }

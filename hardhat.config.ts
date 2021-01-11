@@ -1,6 +1,7 @@
 import { task } from 'hardhat/config'
 import '@nomiclabs/hardhat-ethers'
 import '@nomiclabs/hardhat-waffle'
+import 'dotenv/config'
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -25,19 +26,25 @@ task('accounts', 'Prints the list of accounts', async (
  * @type import('hardhat/config').HardhatUserConfig
  */
 export default {
+  networks: {
+    hardhat: {
+      forking: {
+        /**
+         * @dev The line below now works thanks to `./env.d.ts` being included 
+         * in our `ts.config.json`, TypeScript config file!
+         */
+        url: process.env.FORKING_URL,
+        blockNumber: 11395144
+      }
+    }
+  },
+  paths: {
+    artifacts: "./app/artifacts",
+  },
   solidity: {
     compilers: [
       {
         version: "0.7.5",
-        settings: {
-          optimizer: {
-            enabled: true,
-            runs: 200
-          }
-        },
-      },
-      {
-        version: "0.6.12",
         settings: {
           optimizer: {
             enabled: true,

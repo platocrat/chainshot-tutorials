@@ -28,9 +28,10 @@ contract AaveEtherEscrow {
         arbiter = _arbiter;
         beneficiary = _beneficiary;
         depositor = msg.sender; // Depositor deploys this contract
-        initialDeposit = msg.value; // To pay the beneficiary after delivery
 
         gateway.depositETH{value: address(this).balance}(address(this), 0);
+
+        initialDeposit = msg.value; // To pay the beneficiary after delivery
     }
 
     event Received(address, uint256);
