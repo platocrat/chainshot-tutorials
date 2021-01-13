@@ -60,5 +60,18 @@ contract AaveInterestLottery {
         address winner = ticketPurchasers[winnerIndex];
 
         emit Winner(winner);
+
+        aDai.approve(address(pool), type(uint256).max);
+
+        /** @dev Step 5: Winner Payout */
+        // Each participant should get their money back and the winner should
+        // additionally receive all interest earned
+        for (var i = 0; i < totalPurchasers; i++) {
+            pool.withdraw(address(dai), ticketPrice, ticketPurchasers[i]);
+        }
+
+        // Pay accrued interest to the depositor (not that accrued interest is
+        // in the underlying asset and NOT in the Aave interest earning asset)
+        pool.withdraw(address(aDai), type(uint256).max, winner);
     }
 }

@@ -108,10 +108,38 @@ describe('AaveInterestLottery', () => {
         tx = await response.await()
       })
 
+      /** @dev Step 4: Pick Winner */
       it('should emit an event', async () => {
-        const winnerEvent = tx.events.find(x => x.event == 'Winner')
+        const winnerEvent = tx.events.find((x: { event: string }) => x.event == 'Winner')
 
         expect(winnerEvent, 'Expected a winner event to be emitted')
+      })
+
+      /** @dev Step 5: Winner Payout */
+      it('should no longer have an aDai balance', async () => {
+        const balance = await aDai.balanceOf(aaveInterestLottery.address)
+
+        expect(balance.eq("0"))
+      })
+
+      /** @dev Step 5: Winner Payout */
+      it('should provide each purchaser with their initial balance', async () => {
+        for (let i = 0; i < purchasers.length; i++) {
+          const address = purchasers[i]
+          const balance = await dai.balanceOf(address)
+
+          expect(balance.gte(ticketPrice))
+        }
+      })
+
+      it('should provide the winner with the interest', async () => {
+        const winnerEvent = tx.events.find(
+          (x: { event: string }) => x.event === 'Winner'
+        )
+        const winner = winnerEvent.args[0]
+        const balanace = await dai.balanceOf(winner)
+
+        expect(balance.gt(ticketPrice))
       })
     })
   })

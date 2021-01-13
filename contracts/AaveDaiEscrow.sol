@@ -51,7 +51,8 @@ contract AaveDaiEscrow {
             initialDeposit,
             beneficiary
         );
-        // Pay accrued interest to the depositor
+        // Pay accrued interest to the depositor (not that accrued interest is
+        // in the underlying asset and NOT in the Aave interest earning asset)
         pool.withdraw(address(dai), type(uint256).max, depositor);
     }
 }
