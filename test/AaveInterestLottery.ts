@@ -30,32 +30,35 @@ describe('AaveInterestLottery', () => {
     expect(drawing)
   })
 
-  describe('after multiple purchases from the same address', () => {
-    before(async () => {
-      const signer = await ethers.provider.getSigner(5)
+  /** @dev Step 2:  Purchasing */
+  // describe('after multiple purchases from the same address', () => {
+  //   before(async () => {
+  //     const signer = await ethers.provider.getSigner(5)
 
-      await getDai(dai, [await signer.getAddress()])
-      await dai.connect(signer).approve(aaveInterestLottery.address, ticketPrice)
-      await aaveInterestLottery.connect(signer).purchase()
-    })
+  //     await getDai(dai, [await signer.getAddress()])
+  //     await dai.connect(signer).approve(aaveInterestLottery.address, ticketPrice)
+  //     await aaveInterestLottery.connect(signer).purchase()
+  //   })
 
-    it('should revert on the second purchase attempt', async () => {
-      let ex: any
+  //   /** @dev Step 2: Purchasing */
+  //   it('should revert on the second purchase attempt', async () => {
+  //     let ex: any
 
-      try {
-        await dai.connect(signer).approve(aaveInterestLottery.address, ticketPrice)
-        await aaveInterestLottery.connect(signer).purchase()
-      } catch (_ex) {
-        ex = _ex
-      }
+  //     try {
+  //       await dai.connect(signer).approve(aaveInterestLottery.address, ticketPrice)
+  //       await aaveInterestLottery.connect(signer).purchase()
+  //     } catch (_ex) {
+  //       ex = _ex
+  //     }
 
-      expect(
-        ex,
-        'Expected the transaction to revert when an address attempts a second purchase'
-      )
-    })
-  })
+  //     expect(
+  //       ex,
+  //       'Expected the transaction to revert when an address attempts a second purchase'
+  //     )
+  //   })
+  // })
 
+  /** @dev Step 2: Purchasing */
   describe('after multiple purchases from different addresses', async () => {
     before(async () => {
       for (let i = 0; i < purchasers.length; i++) {
@@ -65,12 +68,22 @@ describe('AaveInterestLottery', () => {
       }
     })
 
-    it('should have a DAI balance', async () => {
-      const balance = await dai.balanceOf(aaveInterestLottery.address)
+    /** @dev Step 2: Purchasing */
+    // it('should have a DAI balance', async () => {
+    //   const balance = await dai.balanceOf(aaveInterestLottery.address)
+
+    //   expect(
+    //     balance.gte(ticketPrice.mul(purchasers.length)),
+    //     'Expected the contract to have DAI for each purchase'
+    //   )
+    // })
+
+    it('should have an aDai balance', async () => {
+      const balance = await aDai.balanceOf(aaveInterestLottery.address)
 
       expect(
         balance.gte(ticketPrice.mul(purchasers.length)),
-        'Expected the contract to have DAI for each purchase'
+        "Expected the contract to have an aDai for each purchase"
       )
     })
   })

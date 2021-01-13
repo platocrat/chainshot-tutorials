@@ -34,10 +34,13 @@ contract AaveInterestLottery {
 
         // Accept DAI in exchange for tickets
         dai.transferFrom(msg.sender, address(this), ticketPrice);
-
+        // Track ticket purchase of depositor
         ticketPurchased[msg.sender] = true;
 
-        
+        // Approve the DAI deposit into the Aave v2 lending pool
+        dai.approve(address(pool), ticketPrice);
+        // Deposit the DAI to the Aave v2 pool contract
+        pool.deposit(address(dai), ticketPrice, address(this), 0);
     }
 
     event Winner(address);
