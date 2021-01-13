@@ -10,7 +10,9 @@ contract AaveInterestLottery {
     // Price of the ticket in DAI (100 DAI)
     uint256 ticketPrice = 100e18;
     // Used to track user's ticket purchase
-    mapping(address => bool) ticketPurchased;
+    mapping(address => bool) hasTicket;
+    // Used to draw from and select the winner
+    address[] ticketPurchasers;
 
     // The mainnet Aave v2 lending pool
     ILendingPool pool =
@@ -27,15 +29,14 @@ contract AaveInterestLottery {
 
     function purchase() external {
         // If a user already has a ticket, don't let them buy another
-        require(
-            !ticketPurchased[msg.sender],
-            "You have already purchased a ticket!"
-        );
+        require(!hasTicket[msg.sender], "You have already purchased a ticket!");
 
         // Accept DAI in exchange for tickets
         dai.transferFrom(msg.sender, address(this), ticketPrice);
         // Track ticket purchase of depositor
-        ticketPurchased[msg.sender] = true;
+        hasTicket[msg.sender] = true;
+        // Keep track of users that purchased ticket to select winner from
+        ticketPurchasers.push(msg.sender);
 
         // Approve the DAI deposit into the Aave v2 lending pool
         dai.approve(address(pool), ticketPrice);
@@ -45,5 +46,19 @@ contract AaveInterestLottery {
 
     event Winner(address);
 
-    function pickWinner() external {}
+    function pickWinner() external {
+        require(
+            block.timestamp >= drawing,
+            "Winner can only be picked after the 'drawing' timestamp"
+        );
+
+        uint256 totalPurchasers = ticketPurchasers.length;
+        // This is insecure method of selecting a winner since the outcome can
+        // be manipulated by miners
+        uint256 winnerIndex =
+            uint256(blockhash(block.number - 1)) % totalPurchasers;
+        address winner = ticketPurchasers[winnerIndex];
+
+        emit Winner(winner);
+    }
 }

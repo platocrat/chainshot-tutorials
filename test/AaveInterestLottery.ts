@@ -78,6 +78,7 @@ describe('AaveInterestLottery', () => {
     //   )
     // })
 
+    /** @dev Step 3: Earn Interest */
     it('should have an aDai balance', async () => {
       const balance = await aDai.balanceOf(aaveInterestLottery.address)
 
@@ -85,6 +86,33 @@ describe('AaveInterestLottery', () => {
         balance.gte(ticketPrice.mul(purchasers.length)),
         "Expected the contract to have an aDai for each purchase"
       )
+    })
+
+    /** @dev Step 4: Pick Winner */
+    describe('after picking a winner', () => {
+      let tx: any
+
+      before(async () => {
+        const unixSeconds = Date.now() / 1000
+        const oneWeek = 8 * 24 * 60 * 60
+
+        await hre.network.provider.request({
+          method: 'evm_setNextBlockTimestamp',
+          params: [unixSeconds + oneWeek]
+        })
+
+        await hre.network.provider.request({ method: 'evm_mine' })
+
+        let response = await aaveInterestLottery.pickWinner()
+
+        tx = await response.await()
+      })
+
+      it('should emit an event', async () => {
+        const winnerEvent = tx.events.find(x => x.event == 'Winner')
+
+        expect(winnerEvent, 'Expected a winner event to be emitted')
+      })
     })
   })
 })
