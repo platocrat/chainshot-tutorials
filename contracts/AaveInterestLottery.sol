@@ -66,7 +66,7 @@ contract AaveInterestLottery {
         /** @dev Step 5: Winner Payout */
         // Each participant should get their money back and the winner should
         // additionally receive all interest earned
-        for (var i = 0; i < totalPurchasers; i++) {
+        for (uint256 i = 0; i < totalPurchasers; i++) {
             pool.withdraw(address(dai), ticketPrice, ticketPurchasers[i]);
         }
 
